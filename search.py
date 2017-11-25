@@ -19,6 +19,7 @@ Pacman agents (in searchAgents.py).
 
 import util
 
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -70,7 +71,8 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem):
     """
@@ -88,75 +90,97 @@ def depthFirstSearch(problem):
     """
     "*** YOUR CODE HERE ***"
 
-    frontier =  util.Stack()
-    explored =  set()
-
-    start = (problem.getStartState() , [] , 0)
+    # create a frontier stack
+    frontier = util.Stack()
+    # create an explored set
+    explored = set()
+    # push the start state of the problem and path
+    start = (problem.getStartState(), [])
     frontier.push(start)
 
+    # loop until the frontier is empty
     while not frontier.isEmpty():
-        (state, path , cost) = frontier.pop()
+        # pop the state and path from the frontier stack
+        (state, path) = frontier.pop()
 
+        # if this state is goal return the path
         if problem.isGoalState(state):
             return path
-
+        # check if this state is not in the explored set
         if not state in explored:
+
+            # add it to explored set
             explored.add(state)
 
-            for (child , child_path , child_cost)  in problem.getSuccessors(state):
-                new_cost = cost + child_cost
+            # iterate through all the children and put them on the frontier stack
+            for (child, child_path, child_cost) in problem.getSuccessors(state):
                 new_path = path + [child_path]
-                new_node = (child , new_path , new_cost)
+                new_node = (child, new_path)
                 frontier.push(new_node)
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    frontier =  util.Queue()
-    explored =  set()
-
-    start = (problem.getStartState() , [] , 0)
+    # create a frontier queue
+    frontier = util.Queue()
+    # create an explored set
+    explored = set()
+    # push the start state of the problem and path
+    start = (problem.getStartState(), [])
     frontier.push(start)
 
+    # loop until the frontier is empty
     while not frontier.isEmpty():
-        (state, path , cost) = frontier.pop()
+        # pop the state and path from the frontier queue
+        (state, path) = frontier.pop()
 
+        # if this state is goal return the path
         if problem.isGoalState(state):
             return path
-
+        # check if this state is not in the explored set
         if not state in explored:
+
+            # add it to explored set
             explored.add(state)
 
-            for (child , child_path , child_cost)  in problem.getSuccessors(state):
-                new_cost = cost + child_cost
+            # iterate through all the children and put them on the frontier queue
+            for (child, child_path, child_cost) in problem.getSuccessors(state):
                 new_path = path + [child_path]
-                new_node = (child , new_path , new_cost)
+                new_node = (child, new_path)
                 frontier.push(new_node)
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    frontier =  util.PriorityQueue()
-    explored =  set()
+    # create a frontier priority queue
+    frontier = util.PriorityQueue()
+    # create an explored set
+    explored = set()
 
-    start = (problem.getStartState() , [] , 0)
-    frontier.push(start,0)
+    # create a start variable that contains the start state , path , cost
+    start = (problem.getStartState(), [], 0)
+    # push the start variable in frontier
+    frontier.push(start, 0)
 
+    #loop until frontier became empty
     while not frontier.isEmpty():
-        (state, path , cost) = frontier.pop()
-
+        # pop the state that has min cost
+        (state, path, cost) = frontier.pop()
+        # check if this state the goal
         if problem.isGoalState(state):
             return path
-
+        # check if this state not on explored set
         if not state in explored:
             explored.add(state)
-
-            for (child , child_path , child_cost)  in problem.getSuccessors(state):
+            # loop through all children and put them in frontier after update path and cost
+            for (child, child_path, child_cost) in problem.getSuccessors(state):
                 new_cost = cost + child_cost
                 new_path = path + [child_path]
-                new_node = (child , new_path , new_cost)
-                frontier.push(new_node,new_cost)
+                new_node = (child, new_path, new_cost)
+                frontier.push(new_node, new_cost)
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -165,31 +189,39 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    frontier =  util.PriorityQueue()
-    explored =  set()
+    # create a frontier priority queue
+    frontier = util.PriorityQueue()
+    # create an explored set
+    explored = set()
 
-    start = (problem.getStartState() , [] , 0 , heuristic(problem.getStartState() , problem))
+    # create a start variable put the start state of the problem and the path , cost , heuristic
+    start = (problem.getStartState(), [], 0, heuristic(problem.getStartState(), problem))
 
-    frontier.push(start,heuristic(problem.getStartState() , problem))
+    # push the start state and the heuristic
+    frontier.push(start, heuristic(problem.getStartState(), problem))
 
     while not frontier.isEmpty():
-        (state, path , cost , heuristic_cost) = frontier.pop()
+        # pop the state that has min cost
+        (state, path, cost, heuristic_cost) = frontier.pop()
 
+        # check if this state goal state
         if problem.isGoalState(state):
             return path
-
+        # check if this state not in explored set
         if not state in explored:
             explored.add(state)
 
-            for (child , child_path , child_cost)  in problem.getSuccessors(state):
+            # iterate through all children and put the state and heuristic in the frontier
+            for (child, child_path, child_cost) in problem.getSuccessors(state):
                 new_cost = cost + child_cost
                 new_path = path + [child_path]
-                new_heuristic_cost  = new_cost + heuristic(child , problem)
-                new_node = (child , new_path , new_cost , new_heuristic_cost)
-                frontier.push(new_node,new_heuristic_cost)
+                new_heuristic_cost = new_cost + heuristic(child, problem)
+                new_node = (child, new_path, new_cost, new_heuristic_cost)
+                frontier.push(new_node, new_heuristic_cost)
 
 
 # Abbreviations
